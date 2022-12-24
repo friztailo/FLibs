@@ -34,7 +34,17 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
     __all_keys__[string.lower(input.getKeyName(key))] = true
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then if !k._pressed then k.pressed() k.click(true) k._pressed = true end end else k._pressed = true break end
+            if __all_keys__[string.lower(b)] then 
+                if a == #k.__key_name__ then 
+                    if !k._pressed then 
+                        k.pressed() 
+                        k.click(true) 
+                        k._pressed = true 
+                    end 
+                end
+            else 
+                break 
+            end
         end
     end
 end)
@@ -44,7 +54,18 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
     
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            if !__all_keys__[string.lower(b)] then if a == #k.__key_name__ then if k._pressed then k.released() k.click(false) k._pressed = false end end else k._pressed = false break end
+            if !__all_keys__[string.lower(b)] then 
+                if a == #k.__key_name__ then 
+                    if k._pressed then 
+                        k.released() 
+                        k.click(false) 
+                        k._pressed = false 
+                    end 
+                end
+            else
+                k._pressed = false 
+                break 
+            end
         end
     end
 end)
@@ -52,7 +73,13 @@ end)
 hook.add("Think", "__KeyCheck__", function()
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then k.loop(k.__pressed__) end else break end
+            if __all_keys__[string.lower(b)] then 
+                if a == #k.__key_name__ then 
+                    k.loop(k.__pressed__) 
+                end 
+            else 
+                break 
+            end
         end
     end
 end)
