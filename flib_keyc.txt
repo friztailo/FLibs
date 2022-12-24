@@ -8,8 +8,8 @@ function keyC:initialize(...)
     self.id = #__keys__ + 1
     
     if type(...) == "string" then
-        self.__key_name__ = {...}
-    else
+        self.__key_name__ = table.explode(" ", ...)
+    elseif type(...) == "table" then
         self.__key_name__ = ...
     end
     
@@ -40,12 +40,9 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
                         k.pressed() 
                         k.click(true) 
                         k._pressed = true 
-                        print("fdgdfgf")
                     end 
                 end
-            else 
-                break 
-            end
+            else break end
         end
     end
 end)
@@ -79,12 +76,8 @@ hook.add("Think", "__KeyCheck__", function()
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
             if __all_keys__[string.lower(b)] then 
-                if a == #k.__key_name__ then 
-                    k.loop(k.__pressed__) 
-                end 
-            else 
-                break 
-            end
+                if a == #k.__key_name__ then k.loop(k._pressed) end 
+            else break end
         end
     end
 end)
