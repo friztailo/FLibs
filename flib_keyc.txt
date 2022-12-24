@@ -2,10 +2,10 @@ keyC = class("keyC")
 
 local __keys__ = {}
 
-function keyC:initialize(key)
+function keyC:initialize(...)
     self.id = #__keys__ + 1
     
-    self.__key_name__ = string.upper(key)
+    self.__key_name__ = ...
     
     self.__pressed__ = false
     
@@ -36,10 +36,17 @@ end)
 
 hook.add("inputReleased", "__KeyCheck__", function(key)
     for i, k in pairs(__keys__) do
-        if input.getKeyName(key) == k.__key_name__ then
-            k.released()
-            k.click(false)
-            k.__pressed__ = false 
+        for a, b in pairs(k.__key_name__) do
+            local press_button = 0
+            if input.getKeyName(key) == k.__key_name__ then
+                press_button = press_button + 1
+            end
+            
+            if press_button == #k.__key_name__ then
+                k.released()
+                k.click(false)
+                k.__pressed__ = false
+            end
         end
     end
 end)
