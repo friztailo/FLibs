@@ -5,7 +5,11 @@ local __keys__ = {}
 function keyC:initialize(...)
     self.id = #__keys__ + 1
     
-    self.__key_name__ = ...
+    if type(...) == "string" then
+        self.__key_name__ = {...}
+    else
+        self.__key_name__ = ...
+    end
     
     self.__pressed__ = false
     
