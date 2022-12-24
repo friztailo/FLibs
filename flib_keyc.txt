@@ -45,7 +45,7 @@ end)
 
 hook.add("Think", "__KeyCheck__", function()
     for i, k in pairs(__keys__) do
-        if self.__pressed__ then
+        if k.__pressed__ then
             k.onPressed()
             k.onClick()
         else
