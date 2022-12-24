@@ -37,3 +37,4 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
         end
     end
 end)
+return keyC
