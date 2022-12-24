@@ -1,7 +1,6 @@
 keyC = class("keyC")
 
 local __all_keys__ = {}
-
 local __keys__ = {}
 
 function keyC:initialize(...)
@@ -11,6 +10,12 @@ function keyC:initialize(...)
         self.__key_name__ = string.explode(" ", ...)
     elseif type(...) == "table" then
         self.__key_name__ = ...
+    end
+    
+    if #self.__key_name__ > 1 then
+        self._combination = true
+    else
+        self._combination = false
     end
     
     self._pressed = false
@@ -29,6 +34,7 @@ function keyC:initialize(...)
 end
 
 function keyC:getValue() return self.__pressed__ end
+function keyC:isCombination() return self._combination end
 
 hook.add("inputPressed", "__KeyCheck__", function(key)
     __all_keys__[string.lower(input.getKeyName(key))] = true
@@ -72,10 +78,6 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
     end
 end)
 
-hook.add("Think", "__KeyCheck__", function()
-    for i, k in pairs(__keys__) do
-        k.loop(k._pressed)
-    end
-end)
+hook.add("Think", "__KeyCheck__", function() for i, k in pairs(__keys__) do k.loop(k._pressed) end end)
 
 return keyC
