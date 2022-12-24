@@ -42,7 +42,7 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
             local press_button = 0
-            if input.getKeyName(key) == k.__key_name__ then
+            if input.getKeyName(key) == string.upper(k.__key_name__[a]) then
                 press_button = press_button + 1
             end
             
