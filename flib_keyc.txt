@@ -5,7 +5,7 @@ local __keys__ = {}
 function keyC:initialize(key)
     self.id = #__keys__ + 1
     
-    self.__key_name__ = key
+    self.__key_name__ = string.lower(key)
     
     self.__pressed__ = false
     
