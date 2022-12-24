@@ -63,7 +63,11 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
                     end 
                 end
             else
-                k._pressed = false 
+                if k._pressed then
+                    k.released() 
+                    k.click(false)
+                    k._pressed = false
+                end
                 break 
             end
         end
