@@ -40,6 +40,7 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
                         k.pressed() 
                         k.click(true) 
                         k._pressed = true 
+                        print("fdgdfgf")
                     end 
                 end
             else 
