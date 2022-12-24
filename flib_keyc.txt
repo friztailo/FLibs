@@ -76,8 +76,8 @@ hook.add("Think", "__KeyCheck__", function()
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
             if __all_keys__[string.lower(b)] then 
-                if a == #k.__key_name__ then k.loop(k._pressed) end 
-            else break end
+                if a == #k.__key_name__ then k.loop(true) end 
+            else k.loop(false) break end
         end
     end
 end)
