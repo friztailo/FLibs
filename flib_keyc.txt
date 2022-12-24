@@ -13,6 +13,8 @@ function keyC:initialize(...)
         self.__key_name__ = ...
     end
     
+    self._pressed = false
+    
     self.click = function(value) end
     
     self.pressed = function() end
@@ -32,7 +34,7 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
     __all_keys__[string.lower(input.getKeyName(key))] = true
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then k.pressed() k.click(true) end else break end
+            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then if !k._pressed then k.pressed() k.click(true) k._pressed = true end end else break end
         end
     end
 end)
@@ -42,7 +44,7 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
     
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then k.released() k.click(false) end else break end
+            if !__all_keys__[string.lower(b)] then if a == #k.__key_name__ then if k._pressed then k.released() k.click(false) k._pressed = false end end else break end
         end
     end
 end)
