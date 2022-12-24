@@ -1,5 +1,7 @@
 keyC = class("keyC")
 
+local __all_keys__ = {}
+
 local __keys__ = {}
 
 function keyC:initialize(...)
@@ -10,8 +12,6 @@ function keyC:initialize(...)
     else
         self.__key_name__ = ...
     end
-    
-    self.__pressed__ = false
     
     self.click = function(value) end
     
@@ -29,36 +29,29 @@ end
 function keyC:getValue() return self.__pressed__ end
 
 hook.add("inputPressed", "__KeyCheck__", function(key)
+    __all_keys__[string.lower(input.getKeyName(key))] = true
     for i, k in pairs(__keys__) do
-        if input.getKeyName(key) == k.__key_name__ then
-            k.pressed()
-            k.click(true)
-            k.__pressed__ = true 
+        for a, b in pairs(k.__key_name__) do
+            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then k.pressed() k.click(true) end else break end
         end
     end
 end)
 
 hook.add("inputReleased", "__KeyCheck__", function(key)
+    __all_keys__[string.lower(input.getKeyName(key))] = false
+    
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            local press_button = 0
-            if input.getKeyName(key) == string.upper(k.__key_name__[a]) then
-                press_button = press_button + 1
-            end
-            
-            if press_button == #k.__key_name__ then
-                k.released()
-                k.click(false)
-                k.__pressed__ = false
-            end
+            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then k.released() k.click(false) end else break end
         end
     end
 end)
 
 hook.add("Think", "__KeyCheck__", function()
     for i, k in pairs(__keys__) do
-        if k.__pressed__ then k.onPressed() else k.onReleased() end
-        k.loop(k.__pressed__)
+        for a, b in pairs(k.__key_name__) do
+            if __all_keys__[string.lower(b)] then if a == #k.__key_name__ then k.loop(k.__pressed__) end else break end
+        end
     end
 end)
 
