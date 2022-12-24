@@ -8,7 +8,7 @@ function keyC:initialize(...)
     self.id = #__keys__ + 1
     
     if type(...) == "string" then
-        self.__key_name__ = table.explode(" ", ...)
+        self.__key_name__ = string.explode(" ", ...)
     elseif type(...) == "table" then
         self.__key_name__ = ...
     end
