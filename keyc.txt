@@ -1,0 +1,76 @@
+--@name friztails/libs/keyc
+/*
+        __________  _________ _________    ______    ____ 
+       / ____/ __ \/  _/__  //_  __/   |  /  _/ /   / __ \
+      / /_  / /_/ // /   / /  / / / /| |  / // /   / / / /
+     / __/ / _, _// /   / /__/ / / ___ |_/ // /___/ /_/ / 
+    /_/   /_/ |_/___/  /____/_/ /_/  |_/___/_____/\____/  
+    
+    FLib KeyCheck
+    
+    Discord Server: GMOD E2/SF nado? >> https://discord.gg/6Q5NnHQTrh
+*/
+
+--Example | 16 - 35
+/*
+--@name Example For FLib KeyC
+--@author 
+--@client
+
+--Work only in CLIENT!
+
+--@include friztails/libs/keyc.txt
+require "friztails/libs/keyc.txt"
+
+LBM = keyC:new("MOUSE1")
+LBM.pressed = function() print("Pressed on LBM!") end
+LBM.released = function() print("Released on LBM!") end
+LBM.onClick = function() print("Click on LBM!") end
+print(LBM:getValue())
+
+RBM = keyC:new("MOUSE2")
+RBM.pressed = function() print("Pressed on RBM!") end
+RBM.released = function() print("Released on RBM!") end
+RBM.onClick = function() print("Click on RBM!") end
+print(RBM:getValue())
+*/
+
+keyC = class("keyC")
+
+local __keys__ = {}
+
+function keyC:initialize(key)
+    self.id = #__keys__ + 1
+    
+    self.__key_name__ = key
+    
+    self.__pressed__ = false
+    
+    self.onClick = function() end
+    self.pressed = function() end
+    self.released = function() end
+    
+    __keys__[self.id] = self
+end
+
+function keyC:getValue() return self.__pressed__ end
+
+hook.add("inputPressed", "__KeyCheck__", function(key)
+    for i, k in pairs(__keys__) do
+        if input.getKeyName(key) == k.__key_name__ then
+            k.pressed()
+            k.onClick()
+            k.__pressed__ = true 
+        end
+    end
+end)
+
+hook.add("inputReleased", "__KeyCheck__", function(key)
+    for i, k in pairs(__keys__) do
+        if input.getKeyName(key) == k.__key_name__ then
+            k.released()
+            k.onClick()
+            k.__pressed__ = false 
+        end
+    end
+end)
