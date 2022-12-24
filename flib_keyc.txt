@@ -9,14 +9,15 @@ function keyC:initialize(key)
     
     self.__pressed__ = false
     
-    self.click = function() end
-    self.onClick = function() end
+    self.click = function(value) end
     
     self.pressed = function() end
     self.onPressed = function() end
     
     self.released = function() end
     self.onReleased = function() end
+    
+    self.loop = function(value) end
     
     __keys__[self.id] = self
 end
@@ -27,7 +28,7 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
     for i, k in pairs(__keys__) do
         if input.getKeyName(key) == k.__key_name__ then
             k.pressed()
-            k.click()
+            k.click(true)
             k.__pressed__ = true 
         end
     end
@@ -37,7 +38,7 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
     for i, k in pairs(__keys__) do
         if input.getKeyName(key) == k.__key_name__ then
             k.released()
-            k.click()
+            k.click(false)
             k.__pressed__ = false 
         end
     end
@@ -45,12 +46,8 @@ end)
 
 hook.add("Think", "__KeyCheck__", function()
     for i, k in pairs(__keys__) do
-        if k.__pressed__ then
-            k.onPressed()
-            k.onClick()
-        else
-            k.onReleased()
-        end
+        if k.__pressed__ then k.onPressed() else k.onReleased() end
+        k.loop(k.__pressed__)
     end
 end)
 
