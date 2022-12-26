@@ -13,12 +13,12 @@ function keyC:initialize(...)
     end
     
     if #self.__key_name__ > 1 then
-        self._combination = true
+        self._iscombination = true
     else
-        self._combination = false
+        self._iscombination = false
     end
     
-    self._pressed = false
+    self._ispressed = false
     
     self.click = function(value) end
     
@@ -31,22 +31,24 @@ function keyC:initialize(...)
     self.loop = function(value) end
     
     __keys__[self.id] = self
-end
+ens
 
-function keyC:getValue() return self._pressed end
-function keyC:isCombination() return self._combination end
+function keyC:isCombination() return self._iscombination end
+function keyC:getPressed() return self._pressed end
+function keyC:isPressed() return self._ispressed end
 
 hook.add("inputPressed", "__KeyCheck__", function(key)
     __all_keys__[string.lower(input.getKeyName(key))] = true
+		
     for i, k in pairs(__keys__) do
         for a, b in pairs(k.__key_name__) do
-            if __all_keys__[string.lower(b)] then 
-                if a == #k.__key_name__ then 
-                    if !k._pressed then 
-                        k.pressed() 
-                        k.click(true) 
-                        k._pressed = true 
-                    end 
+            if __all_keys__[string.lower(b)] then
+                if a == #k.__key_name__ then
+                    if !k._ispressed then
+                        k.pressed()
+                        k.click(true)
+                        k._ispressed = true
+                    end
                 end
             else break end
         end
@@ -60,17 +62,17 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
         for a, b in pairs(k.__key_name__) do
             if !__all_keys__[string.lower(b)] then 
                 if a == #k.__key_name__ then 
-                    if k._pressed then 
+                    if k._ispressed then 
                         k.released() 
                         k.click(false) 
-                        k._pressed = false 
+                        k._ispressed = false 
                     end 
                 end
             else
                 if k._pressed then
                     k.released() 
                     k.click(false)
-                    k._pressed = false
+                    k._ispressed = false
                 end
                 break 
             end
