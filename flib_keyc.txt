@@ -52,7 +52,7 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
                         k.pressed()
                         k.click(true)
                         k._ispressed = true
-			self._pressed[string.lower(input.getKeyName(key))] = true
+												 self._pressed[string.lower(k.__key_name__)] = true
                     end
                 end
             else break end
@@ -71,7 +71,7 @@ hook.add("inputReleased", "__KeyCheck__", function(key)
 			k.released() 
 			k.click(false) 
 			k._ispressed = false 
-			self._pressed[string.lower(input.getKeyName(key))] = false
+			self._pressed[string.lower(k.__key_name__)] = false
 		    end 
 		end
 	    else
