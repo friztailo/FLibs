@@ -1,27 +1,15 @@
-keyC = class("keyC")
+local key = class("key")
 
-local __all_keys__ = {}
-local __keys__ = {}
+local keys = {}
+local keys_values = {}
 
-function keyC:initialize(...)
-    self.id = #__keys__ + 1
+function key:initialize(...)
+    self._keys = {}
     
-    if type(...) == "string" then
-        self.__key_name__ = string.explode(" ", ...)
-    elseif type(...) == "table" then
-        self.__key_name__ = ...
-    end
-    
-    if #self.__key_name__ > 1 then
-        self._iscombination = true
-    else
-        self._iscombination = false
-    end
-    
-    self._pressed = {}
     self._ispressed = false
+    self._pressed = {}
     
-    for i, k in pairs(string.explode(" ", ...)) do self._pressed[string.lower(k)] = false end
+    self._iscombination = false
     
     self.click = function(value) end
     
@@ -33,26 +21,30 @@ function keyC:initialize(...)
     
     self.loop = function(value) end
     
-    __keys__[self.id] = self
-ens
+    if type(...) == "string" then self._keys = string.explode(" ", ...) elseif type(...) == "table" then self._keys = ... end
+    
+    for i, k in pairs(self._keys) do self._pressed[string.lower(k)] = false end
+    
+    if #self._keys > 1 then self._iscombination = true end
+    
+    keys[#keys] = self
+end
 
-function keyC:isCombination() return self._iscombination end
+function key:isCombination() return self._iscombination end
+function key:isPressed() return self.ispressed end
+function key:getPressed() return self._pressed end
 
-function keyC:getPressed() return self._pressed end
-function keyC:isPressed() return self._ispressed end
-
-hook.add("inputPressed", "__KeyCheck__", function(key)
-    __all_keys__[string.lower(input.getKeyName(key))] = true
-
-    for i, k in pairs(__keys__) do
-        for a, b in pairs(k.__key_name__) do
-            if __all_keys__[string.lower(b)] then
-                if a == #k.__key_name__ then
+hook.add("inputPressed", "flib_key", function(id)
+    keys_values[string.lower(input.getKeyName(id))] = true
+    for i, k in pairs(keys) do
+        for a, b in pairs(k._keys) do
+            if keys_values[string.lower(b)] then
+                if a == #k._keys then
                     if !k._ispressed then
                         k.pressed()
                         k.click(true)
                         k._ispressed = true
-												 self._pressed[string.lower(k.__key_name__)] = true
+                                 k._pressed[string.lower(b)] = true
                     end
                 end
             else break end
@@ -60,33 +52,31 @@ hook.add("inputPressed", "__KeyCheck__", function(key)
     end
 end)
 
-hook.add("inputReleased", "__KeyCheck__", function(key)
-    __all_keys__[string.lower(input.getKeyName(key))] = false
-
-    for i, k in pairs(__keys__) do
-	for a, b in pairs(k.__key_name__) do
-	    if !__all_keys__[string.lower(b)] then 
-		if a == #k.__key_name__ then 
-		    if k._ispressed then 
-			k.released() 
-			k.click(false) 
-			k._ispressed = false 
-			self._pressed[string.lower(k.__key_name__)] = false
-		    end 
-		end
-	    else
-		if k._ispressed then
-		    k.released() 
-		    k.click(false)
-		    k._ispressed = false
-		    self._pressed[string.lower(input.getKeyName(key))] = false
-		end
-		break 
-	    end
-	end
+hook.add("inputReleased", "flib_key", function(id)
+    keys_values[string.lower(input.getKeyName(id))] = false
+    for i, k in pairs(keys) do
+        for a, b in pairs(k._keys) do
+               if !keys_values[string.lower(b)] then 
+                      if a == #k._keys then 
+                          if k._ispressed then 
+                                 k.released() 
+                                 k.click(false) 
+                                 k._ispressed = false 
+                                 k._pressed[string.lower(b)] = false
+                          end 
+                      end
+               else
+                      if k._ispressed then
+                          k.released() 
+                          k.click(false)
+                          k._ispressed = false
+                          k._pressed[string.lower(b)] = false
+                      end
+                      break
+               end
+           end
     end
 end)
 
-hook.add("Think", "__KeyCheck__", function() for i, k in pairs(__keys__) do k.loop(k._ispressed) end end)
-
-return keyC
+hook.add("Think", "__KeyCheck__", function() for i, k in pairs(keys) do k.loop(k._ispressed) end end)
+return key
